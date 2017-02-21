@@ -2,6 +2,18 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class Player {
+	public Image panel;
+	public Text text;
+}
+
+[System.Serializable]
+public class PlayerColor {
+	public Color panelColor;
+	public Color textColor;
+}
+
 public class GameController : MonoBehaviour {
 
 	public Text[] buttonList;
@@ -10,6 +22,10 @@ public class GameController : MonoBehaviour {
 	private string playerSide;
 	private int moveCount;
 	public GameObject restartButton;
+	public Player playerX;
+	public Player playerO;
+	public PlayerColor activePlayerColor;
+	public PlayerColor inactivePlayerColor;
 
 	public void SetGameControllerReferenceOnButtons () {
 		for (int i = 0; i < buttonList.Length; i++) {
@@ -24,6 +40,7 @@ public class GameController : MonoBehaviour {
 		SetGameControllerReferenceOnButtons();
 		playerSide = "X";
 		moveCount = 0;
+		SetPlayerColors (playerX, playerO);
 	}
 		
 	public string GetPlayerSide ()
@@ -93,7 +110,20 @@ public class GameController : MonoBehaviour {
 
 	void ChangeSides() 
 	{
-		playerSide = playerSide == "X" ? "O" : "X";
+		playerSide = (playerSide == "X") ? "O" : "X";
+		if (playerSide == "X") {
+			SetPlayerColors (playerX, playerO);
+		} else {
+			SetPlayerColors (playerO, playerX);
+		}
+	}
+
+	void SetPlayerColors(Player newPlayer, Player oldPlayer)
+	{
+		newPlayer.panel.color = activePlayerColor.panelColor;
+		newPlayer.text.color = activePlayerColor.textColor;
+		oldPlayer.panel.color = inactivePlayerColor.panelColor;
+		oldPlayer.text.color = inactivePlayerColor.textColor;
 	}
 
 	void SetGameOverText(string value)
@@ -123,6 +153,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		restartButton.SetActive (false);
+		SetPlayerColors(playerX, playerO);
 	}
 
 	void GameOver(string winningPlayer)
